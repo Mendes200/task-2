@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch Web Application</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+    }
+
+    .stopwatch-container {
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .time-display {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #ff9800;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .buttons button:hover {
+      background-color: #e67e22;
+    }
+
+    .buttons button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="stopwatch-container">
+    <div class="time-display" id="timeDisplay">00:00:00</div>
+    <div class="buttons">
+      <button id="startButton">Start</button>
+      <button id="pauseButton" disabled>Pause</button>
+      <button id="resetButton" disabled>Reset</button>
+    </div>
+  </div>
+
+  <script>
+    // Stopwatch Functionality
+    let timerInterval;
+    let elapsedTime = 0; // Stores elapsed time in milliseconds
+    let isRunning = false;
+
+    const timeDisplay = document.getElementById("timeDisplay");
+    const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const resetButton = document.getElementById("resetButton");
+
+    // Format time into MM:SS:MS
+    function formatTime(ms) {
+      const minutes = Math.floor(ms / 60000).toString().padStart(2, "0");
+      const seconds = Math.floor((ms % 60000) / 1000).toString().padStart(2, "0");
+      const milliseconds = Math.floor((ms % 1000) / 10).toString().padStart(2, "0");
+      return `${minutes}:${seconds}:${milliseconds}`;
+    }
+
+    // Start Timer
+    function startTimer() {
+      if (isRunning) return;
+
+      isRunning = true;
+      startButton.disabled = true;
+      pauseButton.disabled = false;
+      resetButton.disabled = false;
+
+      const startTime = Date.now() - elapsedTime;
+
+      timerInterval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        timeDisplay.textContent = formatTime(elapsedTime);
+      }, 10);
+    }
+
+    // Pause Timer
+    function pauseTimer() {
+      if (!isRunning) return;
+
+      isRunning = false;
+      clearInterval(timerInterval);
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+    }
+
+    // Reset Timer
+    function resetTimer() {
+      isRunning = false;
+      clearInterval(timerInterval);
+      elapsedTime = 0;
+      timeDisplay.textContent = "00:00:00";
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+      resetButton.disabled = true;
+    }
+
+    // Event Listeners
+    startButton.addEventListener("click", startTimer);
+    pauseButton.addEventListener("click", pauseTimer);
+    resetButton.addEventListener("click", resetTimer);
+  </script>
+</body>
+</html>
